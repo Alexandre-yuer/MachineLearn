@@ -9,6 +9,9 @@ from scipy.stats import pearsonr
 import jieba
 import pandas as pd
 
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
 def datasets_demo():
     """
     sklearn数据集使用
@@ -207,7 +210,7 @@ def anli():
     products = pd.read_csv("E:\\Python_workspace\\HM_quanzhan\\machine_learning_data\\instacart\\products.csv")
     orders = pd.read_csv("E:\\Python_workspace\\HM_quanzhan\\machine_learning_data\\instacart\\orders.csv")
     aisles = pd.read_csv("E:\\Python_workspace\\HM_quanzhan\\machine_learning_data\\instacart\\aisles.csv")
-    print(aisles)
+    # print(aisles)
 
     # print(order_products,order_products.shape)
 
@@ -216,7 +219,7 @@ def anli():
     tab1 = pd.merge(aisles,products,on=["aisle_id","aisle_id"])
     tab2 = pd.merge(tab1,order_products,on=["product_id","product_id"])
     tab3 = pd.merge(tab2,orders,on=["order_id","order_id"])
-    tab3.head()
+    # tab3.head()
 
     # 3.找到user_id和aisle之间的关系
     table = pd.crosstab(tab3["user_id"],tab3["aisle"])
@@ -228,6 +231,16 @@ def anli():
     # 2.调用fit_transform
     data_new = transfer.fit_transform(data)
     # print("data_new:\n", data_new, data_new.shape)
+
+    # 预估器流程
+    estimator = KMeans(n_clusters=3)
+    estimator.fit(data_new)
+
+    y_predict = estimator.predict(data_new)
+    # print(y_predict[:300])
+
+    score = silhouette_score(data_new,y_predict)
+    print(score)
 
 if __name__ == "__main__":
     # 代码 1：sklearn数据集使用
